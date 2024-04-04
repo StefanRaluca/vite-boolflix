@@ -50,6 +50,16 @@ export default {
             showDetailsId,
             starVote,
         };
+
+    },
+    methods: {
+        overviewMax(overview) {
+            const maxCharacters = 200;
+            if (overview.length > maxCharacters) {
+                return overview.slice(0, maxCharacters) + '...';
+            }
+            return overview;
+        }
     },
 };
 
@@ -75,7 +85,7 @@ export default {
                                 <!--  <p>Vote Average: {{ movie.vote_average }}</p> -->
                                 <p> <span v-for="star in starVote(movie.vote_average)"> <i
                                             class="fa fa-star"></i></span></p>
-                                <p>Overview: {{ movie.overview }}</p>
+                                <p>Overview: {{ overviewMax(movie.overview) }}</p>
                             </div>
                         </div>
                     </div>
@@ -96,7 +106,7 @@ export default {
                                 <!--   <p>Vote Average: {{ tvShow.vote_average }}</p> -->
                                 <p><span v-for="star in starVote(tvShow.vote_average)"> <i
                                             class="fa fa-star"></i></span></p>
-                                <p>Overview: {{ tvShow.overview }}</p>
+                                <p>Overview:{{ overviewMax(tvShow.overview) }}</p>
                             </div>
                         </div>
                     </div>
