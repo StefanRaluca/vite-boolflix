@@ -46,6 +46,14 @@ export default {
                 return 'https://flagcdn.com/16x12/aq.png';
             }
         };
+        const urlImg = (poster_path) => {
+            if (!poster_path) {
+                // se non e disponibile img fai vedere questa img
+                return 'https://t3.ftcdn.net/jpg/03/23/92/38/360_F_323923845_sB6dVDxEFFJOqJB6Rn6kCyf3tBe1RRaA.jpg';
+            }
+            //completa il url con il path
+            return `https://image.tmdb.org/t/p/w342/${poster_path}`;
+        };
         //const per richiamare tutte 2 chiamate axios ?!
         const searchAll = () => {
             searchMovies();
@@ -58,6 +66,7 @@ export default {
             urlFlag,
             searchTVShows,
             searchAll,
+            urlImg,
         };
     }
 }
@@ -65,7 +74,7 @@ export default {
 
 <template>
     <div>
-        <input v-model="state.searchInput" placeholder="Type the name of the movie">
+        <input v-model="state.searchInput" @keyup.enter="searchAll" placeholder="Type the name of the movie">
         <button @click="searchAll">Search</button>
 
 
@@ -76,6 +85,7 @@ export default {
             <li v-for="movie in state.searchResults" :key="movie.id">
                 <p>Title: {{ movie.title }}</p>
                 <p>Original title: {{ movie.original_title }}</p>
+                <img :src="urlImg(movie.poster_path)" :alt="movie.title">
                 <p>Language: <img :src="urlFlag(movie.original_language)" alt="Flag"></p>
                 <p>Vote average: {{ movie.vote_average }}</p>
             </li>
@@ -84,6 +94,7 @@ export default {
         <ol>
             <li v-for="tvShow in state.tvShows" :key="tvShow.id">
                 <p>Title: {{ tvShow.name }}</p>
+                <img :src="urlImg(tvShow.poster_path)" :alt="tvShow.name">
                 <p>Original title: {{ tvShow.original_name }}</p>
                 <p>Language: <img :src="urlFlag(tvShow.original_language)" alt="Flag"></p>
                 <p>Vote average: {{ tvShow.vote_average }}</p>
