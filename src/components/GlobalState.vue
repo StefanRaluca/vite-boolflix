@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { state } from '../../state.js';
 import { reactive } from 'vue';
+import '@fortawesome/fontawesome-free/css/all.css'
+
 
 export default {
     setup() {
@@ -54,6 +56,11 @@ export default {
             //completa il url con il path
             return `https://image.tmdb.org/t/p/w342/${poster_path}`;
         };
+
+        //transformare il vote average in numero inntero
+        const starVote = (vote_average) => {
+            return Math.ceil(vote_average / 2);
+        };
         //const per richiamare tutte 2 chiamate axios ?!
         const searchAll = () => {
             searchMovies();
@@ -67,6 +74,7 @@ export default {
             searchTVShows,
             searchAll,
             urlImg,
+            starVote,
         };
     }
 }
@@ -87,7 +95,8 @@ export default {
                 <p>Original title: {{ movie.original_title }}</p>
                 <img :src="urlImg(movie.poster_path)" :alt="movie.title">
                 <p>Language: <img :src="urlFlag(movie.original_language)" alt="Flag"></p>
-                <p>Vote average: {{ movie.vote_average }}</p>
+                <!--     <p>Vote average: {{ movie.vote_average }}</p> -->
+                <p> <span v-for="star in starVote(movie.vote_average)"> <i class="fa fa-star"></i></span></p>
             </li>
         </ol>
         <h4>Search TV Shows results:</h4>
@@ -97,10 +106,15 @@ export default {
                 <img :src="urlImg(tvShow.poster_path)" :alt="tvShow.name">
                 <p>Original title: {{ tvShow.original_name }}</p>
                 <p>Language: <img :src="urlFlag(tvShow.original_language)" alt="Flag"></p>
-                <p>Vote average: {{ tvShow.vote_average }}</p>
+                <!--        <p>Vote average: {{ tvShow.vote_average }}</p> -->
+                <p><span v-for="star in starVote(tvShow.vote_average)"> <i class="fa fa-star"></i></span></p>
             </li>
         </ol>
     </div>
 </template>
 
-<style></style>
+<style>
+.fa-star {
+    color: yellow;
+}
+</style>
