@@ -1,32 +1,13 @@
 <script>
-import axios from 'axios';
+/* import axios from 'axios'; */
 import { state } from '../../state.js';
 import { reactive } from 'vue';
 import '@fortawesome/fontawesome-free/css/all.css'
 
-
 export default {
     setup() {
-        // facciamo una variabile per state 
-        const movies = state;
-        // metodo per fare la ricerca
-        const searchMovies = () => {
-            axios
-                .get(`${movies.urlSearch}?api_key=${movies.api_key}&query=${movies.searchInput}`)
-                .then(response => {
-                    movies.searchResults = response.data.results;
-                    console.log(response.data.results);
-                });
-        };
-        // metodo per fare la ricerca dei thshow?
-        const searchTVShows = () => {
-            axios.get(`${movies.urlSearchTv}?api_key=${movies.api_key}&query=${movies.searchInput}`)
-                .then(response => {
-                    movies.tvShows = response.data.results;
-                    console.log(response.data.results);
-                });
-        };
-
+        const movies = reactive(state);
+        let showDetailsId = null;
 
         const urlFlag = (countriesCode) => {
             const flagCountries = {
@@ -40,81 +21,143 @@ export default {
                 es: 'https://flagcdn.com/16x12/es.png',
                 fr: 'https://flagcdn.com/16x12/fr.png',
             };
-            // verifica se nella const flagCountries c e il flag corispondente
-            if (flagCountries.hasOwnProperty(countriesCode)) {
-                return flagCountries[countriesCode];
-            } else {
-                // se non c e  fai vedere questa img  
-                return 'https://flagcdn.com/16x12/aq.png';
-            }
+            return flagCountries[countriesCode] || 'https://flagcdn.com/16x12/aq.png';
         };
+
         const urlImg = (poster_path) => {
-            if (!poster_path) {
-                // se non e disponibile img fai vedere questa img
-                return 'https://t3.ftcdn.net/jpg/03/23/92/38/360_F_323923845_sB6dVDxEFFJOqJB6Rn6kCyf3tBe1RRaA.jpg';
-            }
-            //completa il url con il path
-            return `https://image.tmdb.org/t/p/w342/${poster_path}`;
+            return poster_path ? `https://image.tmdb.org/t/p/w342/${poster_path}` : 'https://t3.ftcdn.net/jpg/03/23/92/38/360_F_323923845_sB6dVDxEFFJOqJB6Rn6kCyf3tBe1RRaA.jpg';
         };
 
         //transformare il vote average in numero inntero
         const starVote = (vote_average) => {
             return Math.ceil(vote_average / 2);
         };
-        //const per richiamare tutte 2 chiamate axios ?!
-        const searchAll = () => {
-            searchMovies();
-            searchTVShows();
+
+        const showDetails = (id) => {
+            showDetailsId = id;
+        };
+
+        const hideDetails = () => {
+            showDetailsId = null;
         };
 
         return {
             state: movies,
-            searchMovies,
             urlFlag,
-            searchTVShows,
-            searchAll,
             urlImg,
+            showDetails,
+            hideDetails,
+            showDetailsId,
             starVote,
         };
-    }
-}
+    },
+};
+
 </script>
 
+
 <template>
-    <div>
-        <input v-model="state.searchInput" @keyup.enter="searchAll" placeholder="Type the name of the movie">
-        <button @click="searchAll">Search</button>
+    <main>
 
 
 
+        <div class="search-results">
 
-        <h4>Search movies results:</h4>
-        <ol>
-            <li v-for="movie in state.searchResults" :key="movie.id">
-                <p>Title: {{ movie.title }}</p>
-                <p>Original title: {{ movie.original_title }}</p>
-                <img :src="urlImg(movie.poster_path)" :alt="movie.title">
-                <p>Language: <img :src="urlFlag(movie.original_language)" alt="Flag"></p>
-                <!--     <p>Vote average: {{ movie.vote_average }}</p> -->
-                <p> <span v-for="star in starVote(movie.vote_average)"> <i class="fa fa-star"></i></span></p>
-            </li>
-        </ol>
-        <h4>Search TV Shows results:</h4>
-        <ol>
-            <li v-for="tvShow in state.tvShows" :key="tvShow.id">
-                <p>Title: {{ tvShow.name }}</p>
-                <img :src="urlImg(tvShow.poster_path)" :alt="tvShow.name">
-                <p>Original title: {{ tvShow.original_name }}</p>
-                <p>Language: <img :src="urlFlag(tvShow.original_language)" alt="Flag"></p>
-                <!--        <p>Vote average: {{ tvShow.vote_average }}</p> -->
-                <p><span v-for="star in starVote(tvShow.vote_average)"> <i class="fa fa-star"></i></span></p>
-            </li>
-        </ol>
-    </div>
+            <div v-if="state.searchResults.length">
+                <h2>Movies</h2>
+                <div class="card-container">
+                    <div class="card" v-for="movie in state.searchResults" :key="movie.id">
+                        <div class="card-image" :style="{ backgroundImage: 'url(' + urlImg(movie.poster_path) + ')' }">
+                            <div class="hoverDetails" @mouseover="showDetails(movie.id)" @mouseleave="hideDetails()">
+                                <h4>{{ movie.title }}</h4>
+                                <h5>Original Title: {{ movie.original_title }}</h5>
+                                <p>Language: <img :src="urlFlag(movie.original_language)" alt="Flag"></p>
+                                <!--  <p>Vote Average: {{ movie.vote_average }}</p> -->
+                                <p> <span v-for="star in starVote(movie.vote_average)"> <i
+                                            class="fa fa-star"></i></span></p>
+                                <p>Overview: {{ movie.overview }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-results">
+            <div v-if="state.tvShows.length">
+                <h2>TV Shows</h2>
+                <div class="card-container">
+                    <div class="card" v-for="tvShow in state.tvShows" :key="tvShow.id">
+                        <div class="card-image" :style="{ backgroundImage: 'url(' + urlImg(tvShow.poster_path) + ')' }">
+                            <div class="hoverDetails" @mouseover="showDetails(tvShow.id)" @mouseleave="hideDetails()">
+                                <h4>{{ tvShow.name }}</h4>
+                                <h5> {{ tvShow.original_name }}</h5>
+                                <p>Language: <img :src="urlFlag(tvShow.original_language)" alt="Flag"></p>
+                                <!--   <p>Vote Average: {{ tvShow.vote_average }}</p> -->
+                                <p><span v-for="star in starVote(tvShow.vote_average)"> <i
+                                            class="fa fa-star"></i></span></p>
+                                <p>Overview: {{ tvShow.overview }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
 </template>
+
+
 
 <style>
 .fa-star {
     color: yellow;
+}
+
+
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+.card {
+    width: calc(30% - 90px);
+    margin: 10px;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+
+}
+
+
+.card-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    background-repeat: no-repeat;
+}
+
+.hoverDetails {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.card:hover .hoverDetails {
+    opacity: 1;
+}
+
+.hoverDetails p {
+    margin-bottom: 5px;
 }
 </style>
