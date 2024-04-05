@@ -139,7 +139,6 @@ export default {
 
 
 .card {
-    width: calc(30% - 90px);
     margin: 10px;
     position: relative;
     border-radius: 5px;
