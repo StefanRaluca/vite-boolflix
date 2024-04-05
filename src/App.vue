@@ -1,15 +1,15 @@
 <script>
 import headerApp from './components/headerApp.vue';
-import GlobalState from './components/GlobalState.vue';
 import { reactive } from 'vue';
 import { state } from '.././state.js';
+import MainApp from './components/mainApp.vue';
 
 
 
 export default {
   components: {
     headerApp,
-    GlobalState,
+    MainApp,
   },
   setup() {
     return {
@@ -22,7 +22,7 @@ export default {
 
 <template>
   <headerApp :state="state" />
-  <GlobalState />
+  <MainApp />
 
 </template>
 

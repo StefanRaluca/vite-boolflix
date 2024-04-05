@@ -47,7 +47,6 @@ export default {
             urlImg,
             showDetails,
             hideDetails,
-            showDetailsId,
             starVote,
         };
 
