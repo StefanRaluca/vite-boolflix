@@ -16,13 +16,13 @@ export default {
                         axios.get(`https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${state.api_key}`)
                             .then(castResponse => {
                                 const castArray = castResponse.data.cast;
-                                console.log(castArray);
+                                //console.log(castArray);
                                 if (Array.isArray(castArray)) {
                                     movie.cast = castArray.slice(0, 5).map(actor => ({
                                         name: actor.name,
                                         character: actor.character,
                                     }));
-                                    console.log(movie.cast);
+                                    //console.log(movie.cast);
                                 } else {
                                     movie.cast = [];
                                 }
@@ -30,7 +30,7 @@ export default {
                     });
                 })
 
-
+            movies.searchInput = "";
             axios
                 .get(`${state.urlSearchTv}?api_key=${state.api_key}&query=${state.searchInput}`)
                 .then(response => {
@@ -44,7 +44,7 @@ export default {
                                         name: actor.name,
                                         character: actor.character,
                                     }));
-                                    console.log(tvShow.cast);
+                                    //console.log(tvShow.cast);
                                 } else {
                                     tvShow.cast = [];
                                 }
@@ -52,6 +52,7 @@ export default {
 
                     });
                 })
+
         };
         return {
             movies,
