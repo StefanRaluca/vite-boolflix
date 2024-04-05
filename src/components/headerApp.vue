@@ -9,21 +9,50 @@ export default {
 
         const searchAll = () => {
             axios
-                .get(`${movies.urlSearch}?api_key=${movies.api_key}&query=${movies.searchInput}`)
+                .get(`${state.urlSearch}?api_key=${state.api_key}&query=${state.searchInput}`)
                 .then(response => {
-                    movies.searchResults = response.data.results;
-                    console.log(response.data.results);
+                    state.searchResults = response.data.results;
+                    state.searchResults.forEach(movie => {
+                        axios.get(`https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${state.api_key}`)
+                            .then(castResponse => {
+                                const castArray = castResponse.data.cast;
+                                console.log(castArray);
+                                if (Array.isArray(castArray)) {
+                                    movie.cast = castArray.slice(0, 5).map(actor => ({
+                                        name: actor.name,
+                                        character: actor.character,
+                                    }));
+                                    console.log(movie.cast);
+                                } else {
+                                    movie.cast = [];
+                                }
+                            })
+                    });
                 })
 
 
             axios
-                .get(`${movies.urlSearchTv}?api_key=${movies.api_key}&query=${movies.searchInput}`)
+                .get(`${state.urlSearchTv}?api_key=${state.api_key}&query=${state.searchInput}`)
                 .then(response => {
-                    movies.tvShows = response.data.results;
-                    console.log(response.data.results);
+                    state.tvShows = response.data.results;
+                    state.tvShows.forEach(tvShow => {
+                        axios.get(`https://api.themoviedb.org/3/tv/${tvShow.id}/credits?api_key=${state.api_key}`)
+                            .then(castResponse => {
+                                const castArray = castResponse.data.cast;
+                                if (Array.isArray(castArray)) {
+                                    tvShow.cast = castArray.slice(0, 5).map(actor => ({
+                                        name: actor.name,
+                                        character: actor.character,
+                                    }));
+                                    console.log(tvShow.cast);
+                                } else {
+                                    tvShow.cast = [];
+                                }
+                            })
+
+                    });
                 })
         };
-
         return {
             movies,
             searchAll,

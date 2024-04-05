@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         overviewMax(overview) {
-            const maxCharacters = 200;
+            const maxCharacters = 120;
             if (overview.length > maxCharacters) {
                 return overview.slice(0, maxCharacters) + '...';
             }
@@ -86,6 +86,11 @@ export default {
                                 <!--  <p>Vote Average: {{ movie.vote_average }}</p> -->
                                 <p> <span v-for="star in starVote(movie.vote_average)"> <i
                                             class="fa fa-star"></i></span></p>
+                                <ul v-if="movie.cast && movie.cast.length > 0">
+                                    <li v-for="actor in movie.cast" :key="actor.name">
+                                        <strong>{{ actor.name }}</strong> / {{ actor.character }}
+                                    </li>
+                                </ul>
                                 <p>Overview: {{ overviewMax(movie.overview) }}</p>
                             </div>
                             <img :src="urlImg(movie.poster_path)" alt="Movie poster" class="img_poster">
@@ -109,6 +114,11 @@ export default {
                                 <p><span v-for="star in starVote(tvShow.vote_average)"> <i
                                             class="fa fa-star"></i></span></p>
                                 <p>Overview:{{ overviewMax(tvShow.overview) }}</p>
+                                <ul v-if="tvShow.cast && tvShow.cast.length > 0">
+                                    <li v-for="actor in tvShow.cast" :key="actor.name">
+                                        <strong>{{ actor.name }}</strong> /{{ actor.character }}
+                                    </li>
+                                </ul>
                             </div>
                             <img :src="urlImg(tvShow.poster_path)" alt="TvShow poster" class="img_poster">
                         </div>
@@ -135,6 +145,13 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     padding: 2rem;
+}
+
+.search-results {
+    h2 {
+        text-align: center;
+        background-color: white;
+    }
 }
 
 
@@ -169,13 +186,14 @@ export default {
     padding: 5px;
     opacity: 0;
     transition: opacity 0.3s;
+
+    ul {
+        list-style: none;
+    }
 }
+
 
 .card:hover .hoverDetails {
     opacity: 1;
-}
-
-.hoverDetails p {
-    margin-bottom: 5px;
 }
 </style>
