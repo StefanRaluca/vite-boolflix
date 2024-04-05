@@ -76,8 +76,9 @@ export default {
             <div v-if="state.searchResults.length">
                 <h2>Movies</h2>
                 <div class="card-container">
+
                     <div class="card" v-for="movie in state.searchResults" :key="movie.id">
-                        <div class="card-image" :style="{ backgroundImage: 'url(' + urlImg(movie.poster_path) + ')' }">
+                        <div class="card-image">
                             <div class="hoverDetails" @mouseover="showDetails(movie.id)" @mouseleave="hideDetails()">
                                 <h4>{{ movie.title }}</h4>
                                 <h5>Original Title: {{ movie.original_title }}</h5>
@@ -87,6 +88,7 @@ export default {
                                             class="fa fa-star"></i></span></p>
                                 <p>Overview: {{ overviewMax(movie.overview) }}</p>
                             </div>
+                            <img :src="urlImg(movie.poster_path)" alt="Movie poster" class="img_poster">
                         </div>
                     </div>
                 </div>
@@ -98,7 +100,7 @@ export default {
                 <h2>TV Shows</h2>
                 <div class="card-container">
                     <div class="card" v-for="tvShow in state.tvShows" :key="tvShow.id">
-                        <div class="card-image" :style="{ backgroundImage: 'url(' + urlImg(tvShow.poster_path) + ')' }">
+                        <div class="card-image">
                             <div class="hoverDetails" @mouseover="showDetails(tvShow.id)" @mouseleave="hideDetails()">
                                 <h4>{{ tvShow.name }}</h4>
                                 <h5> {{ tvShow.original_name }}</h5>
@@ -108,6 +110,7 @@ export default {
                                             class="fa fa-star"></i></span></p>
                                 <p>Overview:{{ overviewMax(tvShow.overview) }}</p>
                             </div>
+                            <img :src="urlImg(tvShow.poster_path)" alt="TvShow poster" class="img_poster">
                         </div>
                     </div>
                 </div>
@@ -131,6 +134,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 2rem;
 }
 
 
@@ -146,11 +150,16 @@ export default {
 
 
 .card-image {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
     background-repeat: no-repeat;
+    height: auto;
 }
+
+.img_poster {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
 
 .hoverDetails {
     position: absolute;
